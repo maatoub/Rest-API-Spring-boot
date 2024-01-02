@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entities.Student;
+import com.example.demo.exceptions.StudentNotFound;
 import com.example.demo.repositry.RepoStudent;
 
 @Service
@@ -23,18 +24,15 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public Student getStudent(Long id) {
-        Optional<Student> student = repoStudent.findById(id);
-        if (student.isPresent()) {
-            Student s = student.get();
-            return s;
-        } else {
-            return null;
-        }
+    public Student getStudent(Long id) throws StudentNotFound {
+        Student student = repoStudent.findById(id)
+                .orElseThrow(() -> new StudentNotFound("Student not found !"));
+        return student;
     }
 
     @Override
-    public void deleteStudent(Long id) {
+    public void deleteStudent(Long id) throws StudentNotFound {
+        getStudent(id);
         repoStudent.deleteById(id);
     }
 
@@ -45,7 +43,8 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public Student updateStudent(Student student) {
+    public Student updateStudent(Student student) throws StudentNotFound {
+        getStudent(student.getCode());
         repoStudent.save(student);
         return student;
     }

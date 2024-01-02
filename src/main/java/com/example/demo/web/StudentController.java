@@ -1,6 +1,7 @@
 package com.example.demo.web;
 
 import com.example.demo.entities.Student;
+import com.example.demo.exceptions.StudentNotFound;
 import com.example.demo.services.StudentService;
 
 import java.util.List;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/students")
-public class Controlleur {
+public class StudentController {
+
     @Autowired
     StudentService studentService;
 
@@ -32,17 +34,17 @@ public class Controlleur {
     }
 
     @GetMapping("/{id}")
-    public Student getStudent(@PathVariable Long id) {
+    public Student getStudent(@PathVariable Long id) throws StudentNotFound {
         return studentService.getStudent(id);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delStudent(@PathVariable Long id) {
+    public void delStudent(@PathVariable Long id) throws StudentNotFound {
         studentService.deleteStudent(id);
     }
 
     @PutMapping("/update/{id}")
-    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
+    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) throws StudentNotFound {
         student.setCode(id);
         studentService.updateStudent(student);
         return student;
